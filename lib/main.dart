@@ -64,19 +64,31 @@ class BreadCrumbProvider extends ChangeNotifier {
   }
 }
 
+typedef OnBreadCrumbTapped = void Function(BreadCrumb);
+
 class BreadCrumbWidget extends StatelessWidget {
+  final OnBreadCrumbTapped onTapped;
   final UnmodifiableListView<BreadCrumb> breadCrumbs;
-  const BreadCrumbWidget({super.key, required this.breadCrumbs});
+  const BreadCrumbWidget({
+    super.key,
+    required this.breadCrumbs,
+    required this.onTapped,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Wrap(
       children: breadCrumbs.map(
         (breadCrumb) {
-          return Text(
-            breadCrumb.title,
-            style: TextStyle(
-              color: breadCrumb.isActive ? Colors.blue : Colors.black,
+          return GestureDetector(
+            onTap: () {
+              onTapped(breadCrumb);
+            },
+            child: Text(
+              breadCrumb.title,
+              style: TextStyle(
+                color: breadCrumb.isActive ? Colors.blue : Colors.black,
+              ),
             ),
           );
         },
@@ -128,7 +140,6 @@ class NewBreadCrumbWidget extends StatefulWidget {
 }
 
 class _NewBreadCrumbWidgetState extends State<NewBreadCrumbWidget> {
-
   late final TextEditingController controller;
 
   @override
@@ -162,7 +173,15 @@ class _NewBreadCrumbWidgetState extends State<NewBreadCrumbWidget> {
           ),
           TextButton(
               onPressed: () {
-                
+                final text = controller.text;
+                if (text.isNotEmpty) {
+                  final breadCrumb = BreadCrumb(
+                    isActive: false,
+                    name: text,
+                  );
+                  context.read<BreadCrumbProvider>().add(breadCrumb);
+                  Navigator.of(context).pop();
+                }
               },
               child: const Text('Add'))
         ],

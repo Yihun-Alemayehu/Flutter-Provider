@@ -16,7 +16,7 @@ void main() {
       ),
       home: const HomePage(),
       routes: {
-        '/new': (context) => const Material(),
+        '/new': (context) => const NewBreadCrumbWidget(),
       },
     ),
   ));
@@ -97,6 +97,11 @@ class HomePage extends StatelessWidget {
       ),
       body: Column(
         children: [
+          Consumer<BreadCrumbProvider>(
+            builder: (context, value, child) {
+              return BreadCrumbWidget(breadCrumbs: value.item);
+            },
+          ),
           TextButton(
             onPressed: () {
               Navigator.of(context).pushNamed('/new');
@@ -105,10 +110,61 @@ class HomePage extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              BreadCrumbProvider().reset();
+              context.read<BreadCrumbProvider>().reset();
             },
             child: const Text('Reset'),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class NewBreadCrumbWidget extends StatefulWidget {
+  const NewBreadCrumbWidget({super.key});
+
+  @override
+  State<NewBreadCrumbWidget> createState() => _NewBreadCrumbWidgetState();
+}
+
+class _NewBreadCrumbWidgetState extends State<NewBreadCrumbWidget> {
+
+  late final TextEditingController controller;
+
+  @override
+  void initState() {
+    controller = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Add new bread crumb'),
+        centerTitle: true,
+      ),
+      body: Column(
+        children: [
+          TextField(
+            controller: controller,
+            decoration: InputDecoration(
+                hintText: 'Enter a new bread crumb here...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                )),
+          ),
+          TextButton(
+              onPressed: () {
+                
+              },
+              child: const Text('Add'))
         ],
       ),
     );

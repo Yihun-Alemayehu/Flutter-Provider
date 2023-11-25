@@ -111,7 +111,8 @@ class HomePage extends StatelessWidget {
         children: [
           Consumer<BreadCrumbProvider>(
             builder: (context, value, child) {
-              return BreadCrumbWidget(breadCrumbs: value.item);
+              return BreadCrumbWidget(
+                  onTapped: (p0) {}, breadCrumbs: value.item);
             },
           ),
           TextButton(
